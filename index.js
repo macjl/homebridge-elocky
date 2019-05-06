@@ -17,6 +17,7 @@ module.exports = function(homebridge) {
   homebridge.registerPlatform("homebridge-samplePlatform", "SamplePlatform", SamplePlatform, true);
 }
 
+
 // Platform constructor
 // config may be null
 // api may be null if launched from old homebridge version
