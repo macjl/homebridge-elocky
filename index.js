@@ -14,15 +14,15 @@ module.exports = function(homebridge) {
 
   // For platform plugin to be considered as dynamic platform plugin,
   // registerPlatform(pluginName, platformName, constructor, dynamic), dynamic must be true
-  homebridge.registerPlatform("homebridge-eLocky", "eLocky", SamplePlatform, true);
+  homebridge.registerPlatform("homebridge-eLocky", "eLocky", eLocky, true);
 }
 
 
 // Platform constructor
 // config may be null
 // api may be null if launched from old homebridge version
-function SamplePlatform(log, config, api) {
-  log("SamplePlatform Init");
+function eLocky(log, config, api) {
+  log("eLocky Init");
   var platform = this;
   this.log = log;
   this.config = config;
@@ -68,7 +68,7 @@ function SamplePlatform(log, config, api) {
 // Function invoked when homebridge tries to restore cached accessory.
 // Developer can configure accessory at here (like setup event handler).
 // Update current value.
-SamplePlatform.prototype.configureAccessory = function(accessory) {
+eLocky.prototype.configureAccessory = function(accessory) {
   this.log(accessory.displayName, "Configure Accessory");
   var platform = this;
 
@@ -96,7 +96,7 @@ SamplePlatform.prototype.configureAccessory = function(accessory) {
 
 // Handler will be invoked when user try to config your plugin.
 // Callback can be cached and invoke when necessary.
-SamplePlatform.prototype.configurationRequestHandler = function(context, request, callback) {
+eLocky.prototype.configurationRequestHandler = function(context, request, callback) {
   this.log("Context: ", JSON.stringify(context));
   this.log("Request: ", JSON.stringify(request));
 
@@ -109,7 +109,7 @@ SamplePlatform.prototype.configurationRequestHandler = function(context, request
     // set "type" to platform if the plugin is trying to modify platforms section
     // set "replace" to true will let homebridge replace existing config in config.json
     // "config" is the data platform trying to save
-    callback(null, "platform", true, {"platform":"SamplePlatform", "otherConfig":"SomeData"});
+    callback(null, "platform", true, {"platform":"eLocky", "otherConfig":"SomeData"});
     return;
   }
 
@@ -175,7 +175,7 @@ SamplePlatform.prototype.configurationRequestHandler = function(context, request
 }
 
 // Sample function to show how developer can add accessory dynamically from outside event
-SamplePlatform.prototype.addAccessory = function(accessoryName) {
+eLocky.prototype.addAccessory = function(accessoryName) {
   this.log("Add Accessory");
   var platform = this;
   var uuid;
@@ -199,10 +199,10 @@ SamplePlatform.prototype.addAccessory = function(accessoryName) {
   });
 
   this.accessories.push(newAccessory);
-  this.api.registerPlatformAccessories("homebridge-samplePlatform", "SamplePlatform", [newAccessory]);
+  this.api.registerPlatformAccessories("homebridge-eLocky", "eLocky", [newAccessory]);
 }
 
-SamplePlatform.prototype.updateAccessoriesReachability = function() {
+eLocky.prototype.updateAccessoriesReachability = function() {
   this.log("Update Reachability");
   for (var index in this.accessories) {
     var accessory = this.accessories[index];
@@ -211,9 +211,9 @@ SamplePlatform.prototype.updateAccessoriesReachability = function() {
 }
 
 // Sample function to show how developer can remove accessory dynamically from outside event
-SamplePlatform.prototype.removeAccessory = function() {
+eLocky.prototype.removeAccessory = function() {
   this.log("Remove Accessory");
-  this.api.unregisterPlatformAccessories("homebridge-samplePlatform", "SamplePlatform", this.accessories);
+  this.api.unregisterPlatformAccessories("homebridge-eLocky", "eLocky", this.accessories);
 
   this.accessories = [];
 }

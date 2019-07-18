@@ -1,17 +1,18 @@
 {
-  "name": "homebridge-samplePlatform",
+  "name": "homebridge-eLocky",
   "version": "0.0.1",
-  "description": "Sample Platform plugin for homebridge: https://github.com/nfarina/homebridge",
+  "description": "eLocky Platform plugin for homebridge: https://github.com/nfarina/homebridge",
   "license": "ISC",
   "keywords": [
-    "homebridge-plugin"
+    "homebridge-plugin",
+    "eLocky"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/example/homebridge.git"
+    "url": "https://github.com/macjl/homebridge-elocky.git"
   },
   "bugs": {
-    "url": "http://github.com/example/homebridge/issues"
+    "url": "https://github.com/macjl/homebridge-elocky/issues"
   },
   "engines": {
     "node": ">=0.12.0",
