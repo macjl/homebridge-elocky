@@ -11,10 +11,10 @@ module.exports = function(homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
   UUIDGen = homebridge.hap.uuid;
-  
+
   // For platform plugin to be considered as dynamic platform plugin,
   // registerPlatform(pluginName, platformName, constructor, dynamic), dynamic must be true
-  homebridge.registerPlatform("homebridge-samplePlatform", "SamplePlatform", SamplePlatform, true);
+  homebridge.registerPlatform("homebridge-eLocky", "eLocky", SamplePlatform, true);
 }
 
 
@@ -73,7 +73,7 @@ SamplePlatform.prototype.configureAccessory = function(accessory) {
   var platform = this;
 
   // Set the accessory to reachable if plugin can currently process the accessory,
-  // otherwise set to false and update the reachability later by invoking 
+  // otherwise set to false and update the reachability later by invoking
   // accessory.updateReachability()
   accessory.reachable = true;
 
@@ -127,7 +127,7 @@ SamplePlatform.prototype.configurationRequestHandler = function(context, request
         "id": "name",
         "title": "Name",
         "placeholder": "Fancy Light"
-      }//, 
+      }//,
       // {
       //   "id": "pw",
       //   "title": "Password",
@@ -189,7 +189,7 @@ SamplePlatform.prototype.addAccessory = function(accessoryName) {
   });
   // Plugin can save context on accessory to help restore accessory in configureAccessory()
   // newAccessory.context.something = "Something"
-  
+
   // Make sure you provided a name for service, otherwise it may not visible in some HomeKit apps
   newAccessory.addService(Service.Lightbulb, "Test Light")
   .getCharacteristic(Characteristic.On)
