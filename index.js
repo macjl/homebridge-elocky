@@ -55,8 +55,9 @@ function webListener(port) {
 function doorAccessory(log, config) {
   this.log = log;
   log("Init of accessory type Door Lock");
+  var lockState ;
+  this.lockState = 0 ;
   GlobalDoorAccessory = this ;
-  var lockState = 0 ;
 };
 
 doorAccessory.prototype = {
@@ -100,7 +101,8 @@ doorAccessory.prototype = {
 function alarmAccessory(log, config) {
   this.log = log;
   log("Init of accessory type Alarm");
-  var motionState = false ;
+  var motionState ;
+  this.motionState = false ;
   GlobalAlarmAccessory = this ;
 };
 
