@@ -17,16 +17,23 @@ function webListener(accessory) {
   var my_http = require("http");
   my_http.createServer(function(request,response){
 
+    accessory.log("Webserver called by : " + request.url);
     response.writeHeader(200, {"Content-Type": "text/plain"});
-    response.write("Unlocking Door for 20s");
-    response.end();
 
-    accessory.log("Unlock Door for 20s");
-    accessory.service.setCharacteristic(Characteristic.LockTargetState, 0);
-    setTimeout(function(){
-      accessory.log("Locking Door");
-      accessory.service.setCharacteristic(Characteristic.LockTargetState, 1)
-    }   , 20000);
+    response.write("Welcome\n");
+
+    if ( request.url == "/unlock20")
+    {
+      response.write("Unlocking Door for 20s\n");
+      accessory.log("Unlock Door for 20s");
+      accessory.service.setCharacteristic(Characteristic.LockTargetState, 0);
+      setTimeout(function(){
+        accessory.log("Locking Door");
+        accessory.service.setCharacteristic(Characteristic.LockTargetState, 1)
+      }   , 20000);
+    };
+
+    response.end();
 
   }).listen(8085);
 
