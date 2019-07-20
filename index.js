@@ -1,23 +1,27 @@
-var Service, Characteristic, GlobalLockState = 0;
+var Service, Characteristic, GlobalLockState = 0, GlocalMotionState = 0;
+var GlobalDoorAccessory, GlobalAlarmAccessory ;
 
 module.exports = function (homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    homebridge.registerAccessory("homebridge-http", "eLocky-acc", eLockyAccessory);
+    homebridge.registerAccessory("homebridge-elocky", "elocky-door", doorAccessory);
+    homebridge.registerAccessory("homebridge-elocky", "elocky-alarm", alarmAccessory);
+
+    setTimeout(function(){
+      webListener(8085);
+      GlobalDoorAccessory.service.setCharacteristic(Characteristic.LockTargetState, 1)
+      GlobalAlarmAccessory.service.setCharacteristic(Characteristic.MotionDetected, false)
+    }, 3000);
 };
 
-function eLockyAccessory(log, config) {
-  this.log = log;
-  log("Init of accessory");
-  webListener(this);
-};
+//################## WEB SERVER ########################
 
-function webListener(accessory) {
+function webListener(port) {
 
   var my_http = require("http");
   my_http.createServer(function(request,response){
 
-    accessory.log("Webserver called by : " + request.url);
+    console.log("Webserver called by : " + request.url);
     response.writeHeader(200, {"Content-Type": "text/plain"});
 
     response.write("Welcome\n");
@@ -25,38 +29,50 @@ function webListener(accessory) {
     if ( request.url == "/unlock20")
     {
       response.write("Unlocking Door for 20s\n");
-      accessory.log("Unlock Door for 20s");
-      accessory.service.setCharacteristic(Characteristic.LockTargetState, 0);
+      GlobalDoorAccessory.log("Unlock Door for 20s");
+      GlobalDoorAccessory.service.setCharacteristic(Characteristic.LockTargetState, 0);
       setTimeout(function(){
-        accessory.log("Locking Door");
-        accessory.service.setCharacteristic(Characteristic.LockTargetState, 1)
+        GlobalDoorAccessory.log("Locking Door");
+        GlobalDoorAccessory.service.setCharacteristic(Characteristic.LockTargetState, 1)
       }   , 20000);
+    };
+
+    if ( request.url == "/motion")
+    {
+      response.write("Motion for 10s\n");
+      GlobalAlarmAccessory.log("Motion for 10s");
+      GlobalAlarmAccessory.service.setCharacteristic(Characteristic.MotionDetected, true);
+      setTimeout(function(){
+        GlobalAlarmAccessory.log("Stop Motion");
+        GlobalAlarmAccessory.service.setCharacteristic(Characteristic.MotionDetected, false)
+      }   , 10000);
     };
 
     response.end();
 
-  }).listen(8085);
+  }).listen(port);
 
-  accessory.log("Server Running on 8085");
-  accessory.log("Locking Door in 10s");
-
-  setTimeout(function(){
-    accessory.log("Locking Door");
-    accessory.service.setCharacteristic(Characteristic.LockTargetState, 1)
-  }, 10000);
-
+  console.log("Server Running on " + port);
 }
 
-eLockyAccessory.prototype = {
+//################## DOOR LOCK ########################
+
+function doorAccessory(log, config) {
+  this.log = log;
+  log("Init of accessory type Door Lock");
+  GlobalDoorAccessory = this ;
+};
+
+doorAccessory.prototype = {
 
   getServices: function () {
     let informationService = new Service.AccessoryInformation();
     informationService
-      .setCharacteristic(Characteristic.Manufacturer, "My switch manufacturer")
-      .setCharacteristic(Characteristic.Model, "My switch model")
-      .setCharacteristic(Characteristic.SerialNumber, "123-456-789");
+      .setCharacteristic(Characteristic.Manufacturer, "elocky")
+      .setCharacteristic(Characteristic.Model, "evy")
+      .setCharacteristic(Characteristic.SerialNumber, "xxxx");
 
-    let service = new Service.LockMechanism("Door");
+    let service = new Service.LockMechanism("Door Lock");
     service.getCharacteristic(Characteristic.LockTargetState)
       .on('set', this.setCharacteristic.bind(this))
       .on('get', this.getCharacteristic.bind(this));
@@ -78,6 +94,47 @@ eLockyAccessory.prototype = {
       this.log("Set Door lock status : " + on);
       GlobalLockState = on ;
       this.service.setCharacteristic(Characteristic.LockCurrentState, on);
+      next(null);
+  }
+};
+
+
+//################## ALARM ########################
+
+function alarmAccessory(log, config) {
+  this.log = log;
+  log("Init of accessory type Alarm");
+  GlobalAlarmAccessory = this ;
+};
+
+alarmAccessory.prototype = {
+
+  getServices: function () {
+    let informationService = new Service.AccessoryInformation();
+    informationService
+    .setCharacteristic(Characteristic.Manufacturer, "elocky")
+    .setCharacteristic(Characteristic.Model, "evy")
+    .setCharacteristic(Characteristic.SerialNumber, "xxxx");
+
+    let service = new Service.MotionSensor("Door Alarm");
+    service.getCharacteristic(Characteristic.MotionDetected)
+      .on('set', this.setCharacteristic.bind(this))
+      .on('get', this.getCharacteristic.bind(this));
+
+    this.informationService = informationService;
+    this.service = service;
+    return [informationService, service];
+  },
+
+  getCharacteristic: function (next) {
+      this.log("Get motion status : " + GlocalMotionState);
+      next(null, GlocalMotionState);
+  },
+
+  setCharacteristic: function (on, next) {
+      this.log("Set motion status : " + on);
+      GlocalMotionState = on ;
+      //this.service.setCharacteristic(Characteristic.MotionDetected, on);
       next(null);
   }
 };
