@@ -82,13 +82,13 @@ doorAccessory.prototype = {
   },
 
   getCharacteristic: function (next) {
-      this.log("Get Door lock status : " + lockState);
-      next(null, GlobalLockState);
+      this.log("Get Door lock status : " + this.lockState);
+      next(null, this.lockState);
   },
 
   setCharacteristic: function (on, next) {
       this.log("Set Door lock status : " + on);
-      lockState = on ;
+      this.lockState = on ;
       this.service.setCharacteristic(Characteristic.LockCurrentState, on);
       next(null);
   }
@@ -124,13 +124,13 @@ alarmAccessory.prototype = {
   },
 
   getCharacteristic: function (next) {
-      this.log("Get motion status : " + motionState);
-      next(null, motionState);
+      this.log("Get motion status : " + this.motionState);
+      next(null, this.motionState);
   },
 
   setCharacteristic: function (on, next) {
       this.log("Set motion status : " + on);
-      motionState = on ;
+      this.motionState = on ;
       next(null);
   }
 };
