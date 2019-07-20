@@ -25,10 +25,10 @@ function webListener(port) {
     {
       response.write("Unlocking Door for 20s\n");
       GlobalDoorAccessory.log("Unlock Door for 20s");
-      GlobalDoorAccessory.service.setCharacteristic(Characteristic.LockTargetState, 0);
+      GlobalDoorAccessory.service.setCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.UNSECURED);
       setTimeout(function(){
         GlobalDoorAccessory.log("Locking Door");
-        GlobalDoorAccessory.service.setCharacteristic(Characteristic.LockTargetState, 1)
+        GlobalDoorAccessory.service.setCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED)
       }   , 20000);
     };
 
@@ -56,7 +56,7 @@ function doorAccessory(log, config) {
   this.log = log;
   log("Init of accessory type Door Lock");
   var lockState ;
-  this.lockState = 0 ;
+  this.lockState = Characteristic.LockTargetState.SECURED ;
   GlobalDoorAccessory = this ;
 };
 
