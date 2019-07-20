@@ -1,4 +1,4 @@
-var Service, Characteristic, GlobalLockState = 0, GlocalMotionState = 0;
+var Service, Characteristic ;
 var GlobalDoorAccessory, GlobalAlarmAccessory ;
 
 module.exports = function (homebridge) {
@@ -6,12 +6,7 @@ module.exports = function (homebridge) {
     Characteristic = homebridge.hap.Characteristic;
     homebridge.registerAccessory("homebridge-elocky", "elocky-door", doorAccessory);
     homebridge.registerAccessory("homebridge-elocky", "elocky-alarm", alarmAccessory);
-
-    setTimeout(function(){
-      webListener(8085);
-      GlobalDoorAccessory.service.setCharacteristic(Characteristic.LockTargetState, 1)
-      GlobalAlarmAccessory.service.setCharacteristic(Characteristic.MotionDetected, false)
-    }, 3000);
+    webListener(8085);
 };
 
 //################## WEB SERVER ########################
@@ -61,6 +56,7 @@ function doorAccessory(log, config) {
   this.log = log;
   log("Init of accessory type Door Lock");
   GlobalDoorAccessory = this ;
+  var lockState = 0 ;
 };
 
 doorAccessory.prototype = {
@@ -86,13 +82,13 @@ doorAccessory.prototype = {
   },
 
   getCharacteristic: function (next) {
-      this.log("Get Door lock status : " + GlobalLockState);
+      this.log("Get Door lock status : " + lockState);
       next(null, GlobalLockState);
   },
 
   setCharacteristic: function (on, next) {
       this.log("Set Door lock status : " + on);
-      GlobalLockState = on ;
+      lockState = on ;
       this.service.setCharacteristic(Characteristic.LockCurrentState, on);
       next(null);
   }
@@ -104,6 +100,7 @@ doorAccessory.prototype = {
 function alarmAccessory(log, config) {
   this.log = log;
   log("Init of accessory type Alarm");
+  var motionState = false ;
   GlobalAlarmAccessory = this ;
 };
 
@@ -127,14 +124,13 @@ alarmAccessory.prototype = {
   },
 
   getCharacteristic: function (next) {
-      this.log("Get motion status : " + GlocalMotionState);
-      next(null, GlocalMotionState);
+      this.log("Get motion status : " + motionState);
+      next(null, motionState);
   },
 
   setCharacteristic: function (on, next) {
       this.log("Set motion status : " + on);
-      GlocalMotionState = on ;
-      //this.service.setCharacteristic(Characteristic.MotionDetected, on);
+      motionState = on ;
       next(null);
   }
 };
