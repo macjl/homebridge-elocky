@@ -28,9 +28,9 @@ function webListener(accessory) {
       accessory.service.setCharacteristic(Characteristic.LockTargetState, 1)
     }   , 20000);
 
-  }).listen(8080);
+  }).listen(8085);
 
-  accessory.log("Server Running on 8080");
+  accessory.log("Server Running on 8085");
   accessory.log("Locking Door in 10s");
 
   setTimeout(function(){
